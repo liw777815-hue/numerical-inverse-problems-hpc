@@ -1,9 +1,6 @@
 # Ли Вэйчжи
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-# --- 保持算法公式函数不变 ---
 def get_Tn_A(M, N, n1, n2, s, C1, C1_tilde, C2):
     n = n1 * n2
     m_loc, n_loc = M / n1, N / n2
@@ -34,18 +31,14 @@ def get_Tn_B(M, N, n1, n2, s, C1, C1_tilde, C2):
               c2_eff * (2 * m_loc * ln2 + n_loc * ln1 + 2 * ln1 + ln2))
     return t_init + s * t_iter
 
-
-# --- 实验参数 ---
 M, N, s = 20000, 16000, 16
 C1, C1_tilde, C2 = 1e-9, 1e-8, 1e-10
 
-# 1. 计算串行时间 T1 (n=1, C2=0)
 T1_A = get_Tn_A(M, N, 1, 1, s, C1, C1_tilde, C2)
 T1_B = get_Tn_B(M, N, 1, 1, s, C1, C1_tilde, C2)
 
-
 side_list = [2, 3, 4, 5, 8, 16, 32, 48, 64]
-n_values = [s * s for s in side_list]  # 计算总进程数 n
+n_values = [s * s for s in side_list] 
 
 Ea_list = []
 Eb_list = []
@@ -54,12 +47,8 @@ for side in side_list:
     n1 = side
     n2 = side
     n_total = n1 * n2
-
-    # 直接计算该正方形拓扑下的 Tn
     tn_a = get_Tn_A(M, N, n1, n2, s, C1, C1_tilde, C2)
     tn_b = get_Tn_B(M, N, n1, n2, s, C1, C1_tilde, C2)
-
-    # 计算效率 E
     Ea_list.append((T1_A / tn_a) / n_total)
     Eb_list.append((T1_B / tn_b) / n_total)
 
@@ -73,14 +62,10 @@ plt.plot(n_values, Ea_list, color='red', linestyle='-', marker='o',
          linewidth=2, markersize=8, label='Algorithm A Efficiency')
 plt.plot(n_values, Eb_list, color='blue', linestyle='--', marker='s',
          linewidth=2, markersize=8, label='Algorithm B Efficiency')
-
-# 标注网格形状 (2x2, 4x4...)
 for i, side in enumerate(side_list):
     plt.text(n_values[i], Ea_list[i] + 0.02, f'{side}x{side}',
              ha='center', fontsize=9, color='red', fontweight='bold')
 
-
-# 设置
 plt.title(f'\n(M={M}, N={N}, s={s})',
           fontsize=15, fontweight='bold')
 plt.xlabel(' n (n1 = n2)', fontsize=12)
